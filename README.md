@@ -42,6 +42,28 @@ AI agents perform implementation, testing, and iterative refinement under those 
 
 This repository will not store AI data.
 
+## Sitelen Pali compilation
+
+Compile Sitelen Pali with:
+
+```powershell
+javac IloPiSitelenPali.java
+```
+
+## Sitelen Pali execution
+
+Run Sitelen Pali with:
+
+```powershell
+java IloPiSitelenPali
+```
+
+Ensure a JDK is installed and that the `java` and `javac` commands are available in your environment.
+
+## Technologies
+
+- Java SDK: 26.0.1
+
 ## Links
 
 - Official Toki Pona site: [tokipona.org](https://tokipona.org)
