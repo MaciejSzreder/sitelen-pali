@@ -25,6 +25,7 @@ Sitelen Pali treats different Toki Pona statement types as programming construct
 ## Features
 
 - [ ] Human-readable syntax based on Toki Pona grammar
+- [ ] Sitelen Lasina input validation
 - [ ] Unification and logical inference
 - [ ] Imperative control flow primitives
 - [ ] Procedural abstractions
@@ -63,6 +64,7 @@ Ensure a JDK is installed and that the `java` and `javac` commands are available
 ## Technologies
 
 - Java SDK: 26.0.1
+- Public Toki Pona text corpuses for validation testing
 
 ## Links
 
