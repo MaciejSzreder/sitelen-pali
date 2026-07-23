@@ -59,6 +59,20 @@ Run Sitelen Pali with:
 java IloPiSitelenPali
 ```
 
+To read from a file instead of standard input:
+
+```powershell
+java IloPiSitelenPali --input input.txt
+```
+
+To enable logging and send warnings and errors to a log file:
+
+```powershell
+java IloPiSitelenPali --log sitelen-pali.log
+```
+
+When a log file is provided, warning and error messages are written there in English, while standard output remains in Toki Pona.
+
 Ensure a JDK is installed and that the `java` and `javac` commands are available in your environment.
 
 ## Technologies
