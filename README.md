@@ -26,6 +26,7 @@ Sitelen Pali treats different Toki Pona statement types as programming construct
 
 - [ ] Human-readable syntax based on Toki Pona grammar
 - [ ] Sitelen Lasina input validation
+- [x] Letter case checking
 - [ ] Unification and logical inference
 - [ ] Imperative control flow primitives
 - [ ] Procedural abstractions

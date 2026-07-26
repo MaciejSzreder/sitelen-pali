@@ -53,11 +53,26 @@ public class IloPiSitelenPali {
     private static void run(InputStream input, BufferedWriter log) throws IOException {
         System.out.println("toki ali");
         int codePoint;
+        boolean inWord = false;
         while ((codePoint = input.read()) != -1) {
             char ch = (char) codePoint;
             String printable = printableChar(ch);
             if (isValidSitelenLasina(ch)) {
                 System.out.println("sitelen " + printable + " li pona");
+                if (isWordDelimiter(ch)) {
+                    inWord = false;
+                } else {
+                    if (Character.isUpperCase(ch) && inWord) {
+                        String stdoutMessage = "sona ike: sitelen suli li kama lon open ala pi nimi: " + printable;
+                        String logMessage = "warning: uppercase letter is not the first letter of a word: " + describeChar(ch);
+                        System.out.println(stdoutMessage);
+                        if (log != null) {
+                            log.write(logMessage);
+                            log.newLine();
+                        }
+                    }
+                    inWord = true;
+                }
             } else {
                 System.out.println("sitelen " + printable + " li ike");
                 if (log != null) {
@@ -102,6 +117,10 @@ public class IloPiSitelenPali {
 
     private static boolean isValidSitelenLasina(char ch) {
         return ALLOWED_CHARS.indexOf(ch) >= 0;
+    }
+
+    private static boolean isWordDelimiter(char ch) {
+        return ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t' || ch == '!' || ch == '"' || ch == ',' || ch == '.' || ch == ':' || ch == '?';
     }
 
     private static String printableChar(char ch) {
