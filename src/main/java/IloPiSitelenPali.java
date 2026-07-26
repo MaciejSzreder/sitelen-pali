@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.io.Writer;
 
 public class IloPiSitelenPali {
-    // Allowed characters derived from the Common Voice tok file (hardcoded)
-    // includes space, CR/LF and the punctuation and letters observed in the corpus
     private static final String ALLOWED_CHARS = " \r\n!\",.:?AEIJKLMNOPSTWaeijklmnopstw";
 
     public static void main(String[] args) {

@@ -46,10 +46,10 @@ This repository will not store AI data.
 
 ## Sitelen Pali compilation
 
-Compile Sitelen Pali with:
+Compile Sitelen Pali with Maven:
 
 ```powershell
-javac IloPiSitelenPali.java
+mvn compile
 ```
 
 ## Sitelen Pali execution
@@ -57,28 +57,35 @@ javac IloPiSitelenPali.java
 Run Sitelen Pali with:
 
 ```powershell
-java IloPiSitelenPali
+java -cp target/classes IloPiSitelenPali
 ```
 
 To read from a file instead of standard input:
 
 ```powershell
-java IloPiSitelenPali --input input.txt
+java -cp target/classes IloPiSitelenPali --input input.txt
 ```
 
 To enable logging and send warnings and errors to a log file:
 
 ```powershell
-java IloPiSitelenPali --log sitelen-pali.log
+java -cp target/classes IloPiSitelenPali --log sitelen-pali.log
 ```
 
 When a log file is provided, warning and error messages are written there in English, while standard output remains in Toki Pona.
 
-Ensure a JDK is installed and that the `java` and `javac` commands are available in your environment.
+Run the JUnit test suite with:
+
+```powershell
+mvn test
+```
+
+Ensure a JDK is installed and that `java` and `mvn` are available in your environment.
 
 ## Technologies
 
 - Java SDK: 26.0.1
+- JUnit: 5.11.4
 - Public Toki Pona text corpuses for validation testing
 
 ## Links
