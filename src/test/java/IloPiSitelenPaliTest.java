@@ -20,9 +20,9 @@ class IloPiSitelenPaliTest {
     @Test
     void tabIsHandledAsWhitespaceInPublicBehavior() throws Exception {
         RunResult result = runProgram("A\tB\n", "tab.log");
-        assertTrue(result.stdout.contains("sitelen \t li ike"));
+        assertTrue(result.stdout.contains("sitelen \\t li ike"));
         assertFalse(result.logLines.isEmpty());
-        assertTrue(result.logLines.get(0).contains("invalid character: 'tab'"));
+        assertTrue(result.logLines.get(0).contains("invalid character: tab"));
     }
 
     @Test
