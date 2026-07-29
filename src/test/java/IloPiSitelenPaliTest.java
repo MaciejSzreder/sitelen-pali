@@ -1,5 +1,6 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -16,6 +17,84 @@ import org.junit.jupiter.api.io.TempDir;
 class IloPiSitelenPaliTest {
     @TempDir
     Path tempDir;
+
+    @Test
+    void parserAcceptsShortInputFlag() {
+        CliOptions options = new CliOptionsParser().parse(new String[]{"-i", "in.txt"});
+        assertEquals("in.txt", options.inputPath());
+        assertNull(options.logPath());
+        assertFalse(options.showHelp());
+        assertFalse(options.invalid());
+    }
+
+    @Test
+    void parserAcceptsLongInputFlag() {
+        CliOptions options = new CliOptionsParser().parse(new String[]{"--input", "in.txt"});
+        assertEquals("in.txt", options.inputPath());
+        assertNull(options.logPath());
+        assertFalse(options.showHelp());
+        assertFalse(options.invalid());
+    }
+
+    @Test
+    void parserAcceptsShortLogFlag() {
+        CliOptions options = new CliOptionsParser().parse(new String[]{"-l", "out.log"});
+        assertNull(options.inputPath());
+        assertEquals("out.log", options.logPath());
+        assertFalse(options.showHelp());
+        assertFalse(options.invalid());
+    }
+
+    @Test
+    void parserAcceptsLongLogFlag() {
+        CliOptions options = new CliOptionsParser().parse(new String[]{"--log", "out.log"});
+        assertNull(options.inputPath());
+        assertEquals("out.log", options.logPath());
+        assertFalse(options.showHelp());
+        assertFalse(options.invalid());
+    }
+
+    @Test
+    void parserRecognizesShortHelpFlagWithoutMarkingItInvalid() {
+        CliOptions options = new CliOptionsParser().parse(new String[]{"-h"});
+        assertTrue(options.showHelp());
+        assertFalse(options.invalid());
+        assertNull(options.inputPath());
+        assertNull(options.logPath());
+    }
+
+    @Test
+    void parserRecognizesLongHelpFlagWithoutMarkingItInvalid() {
+        CliOptions options = new CliOptionsParser().parse(new String[]{"--help"});
+        assertTrue(options.showHelp());
+        assertFalse(options.invalid());
+        assertNull(options.inputPath());
+        assertNull(options.logPath());
+    }
+
+    @Test
+    void parserAcceptsInputAndLogInAnyOrder() {
+        CliOptions options = new CliOptionsParser().parse(new String[]{"--log", "out.log", "--input", "in.txt"});
+        assertEquals("in.txt", options.inputPath());
+        assertEquals("out.log", options.logPath());
+        assertFalse(options.showHelp());
+        assertFalse(options.invalid());
+    }
+
+    @Test
+    void parserMarksUnknownOptionsAsInvalidAndShowsHelp() {
+        CliOptions options = new CliOptionsParser().parse(new String[]{"--wat"});
+        assertTrue(options.showHelp());
+        assertTrue(options.invalid());
+    }
+
+    @Test
+    void parserPreservesEarlierOptionsBeforeAnUnknownFlag() {
+        CliOptions options = new CliOptionsParser().parse(new String[]{"--input", "in.txt", "--wat"});
+        assertTrue(options.showHelp());
+        assertTrue(options.invalid());
+        assertEquals("in.txt", options.inputPath());
+    }
 
     @Test
     void tabIsHandledAsWhitespaceInPublicBehavior() throws Exception {

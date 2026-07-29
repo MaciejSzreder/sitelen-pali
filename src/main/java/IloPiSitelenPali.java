@@ -8,44 +8,24 @@ import java.io.Writer;
 
 public class IloPiSitelenPali {
     private static final String ALLOWED_CHARS = " \r\n!\",.:?AEIJKLMNOPSTWaeijklmnopstw";
+    private static final CliOptionsParser CLI_OPTIONS_PARSER = new CliOptionsParser();
 
     public static void main(String[] args) {
-        CliOptions options = parseArgs(args);
-        if (options.showHelp) {
-            printUsage();
-            if (options.invalid) {
+        CliOptions options = CLI_OPTIONS_PARSER.parse(args);
+        if (options.showHelp()) {
+            if (options.invalid()) {
                 System.exit(1);
             }
             return;
         }
 
-        try (InputStream input = openInput(options.inputPath);
-             BufferedWriter log = openLog(options.logPath)) {
+        try (InputStream input = openInput(options.inputPath());
+             BufferedWriter log = openLog(options.logPath())) {
             run(input, log);
         } catch (IOException e) {
             System.out.println("tenpo ike: " + e.getMessage());
             System.exit(1);
         }
-    }
-
-    private static CliOptions parseArgs(String[] args) {
-        CliOptions options = new CliOptions();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if ("-i".equals(arg) || "--input".equals(arg)) {
-                options.inputPath = requireValue(args, ++i, arg);
-            } else if ("-l".equals(arg) || "--log".equals(arg)) {
-                options.logPath = requireValue(args, ++i, arg);
-            } else if ("-h".equals(arg) || "--help".equals(arg)) {
-                options.showHelp = true;
-            } else {
-                System.out.println("nimi ni li sona ala: " + arg);
-                options.showHelp = true;
-                options.invalid = true;
-                return options;
-            }
-        }
-        return options;
     }
 
     private static void run(InputStream input, BufferedWriter log) throws IOException {
@@ -98,21 +78,6 @@ public class IloPiSitelenPali {
         return new BufferedWriter(new FileWriter(logPath, false));
     }
 
-    private static String requireValue(String[] args, int index, String option) {
-        if (index >= args.length) {
-            System.out.println("nimi kama jo li lon ala tan " + option);
-            printUsage();
-            System.exit(1);
-        }
-        return args[index];
-    }
-
-    private static void printUsage() {
-        System.out.println("toki! ni li pali e ilo:");
-        System.out.println("  java IloPiSitelenPali [--input FILE] [--log FILE]");
-        System.out.println("  java IloPiSitelenPali --help");
-    }
-
     private static boolean isValidSitelenLasina(char ch) {
         return ALLOWED_CHARS.indexOf(ch) >= 0;
     }
@@ -149,12 +114,5 @@ public class IloPiSitelenPali {
             default:
                 return "'" + ch + "'";
         }
-    }
-
-    private static final class CliOptions {
-        private String inputPath;
-        private String logPath;
-        private boolean showHelp;
-        private boolean invalid;
     }
 }
