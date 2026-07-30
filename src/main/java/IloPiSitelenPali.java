@@ -1,10 +1,7 @@
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 
 public class IloPiSitelenPali {
     private static final String ALLOWED_CHARS = " \r\n!\",.:?AEIJKLMNOPSTWaeijklmnopstw";
@@ -20,7 +17,7 @@ public class IloPiSitelenPali {
         }
 
         try (InputStream input = openInput(options.inputPath());
-             BufferedWriter log = openLog(options.logPath())) {
+             Log log = Log.open(options.logPath())) {
             run(input, log);
         } catch (IOException e) {
             System.out.println("tenpo ike: " + e.getMessage());
@@ -28,7 +25,7 @@ public class IloPiSitelenPali {
         }
     }
 
-    private static void run(InputStream input, BufferedWriter log) throws IOException {
+    private static void run(InputStream input, Log log) throws IOException {
         System.out.println("toki ali");
         int codePoint;
         boolean inWord = false;
@@ -42,25 +39,15 @@ public class IloPiSitelenPali {
                 } else {
                     if (Character.isUpperCase(ch) && inWord) {
                         String stdoutMessage = "sona ike: sitelen suli li kama lon open ala pi nimi: " + printable;
-                        String logMessage = "warning: uppercase letter is not the first letter of a word: " + describeChar(ch);
                         System.out.println(stdoutMessage);
-                        if (log != null) {
-                            log.write(logMessage);
-                            log.newLine();
-                        }
+                        log.logUppercaseLetterNotAtWordStart(ch);
                     }
                     inWord = true;
                 }
             } else {
                 System.out.println("sitelen " + printable + " li ike");
-                if (log != null) {
-                    log.write("warning: invalid character: " + describeChar(ch));
-                    log.newLine();
-                }
+                log.logInvalidCharacter(ch);
             }
-        }
-        if (log != null) {
-            log.flush();
         }
     }
 
@@ -69,13 +56,6 @@ public class IloPiSitelenPali {
             return new BufferedInputStream(System.in);
         }
         return new BufferedInputStream(new FileInputStream(inputPath));
-    }
-
-    private static BufferedWriter openLog(String logPath) throws IOException {
-        if (logPath == null) {
-            return null;
-        }
-        return new BufferedWriter(new FileWriter(logPath, false));
     }
 
     private static boolean isValidSitelenLasina(char ch) {
@@ -101,18 +81,4 @@ public class IloPiSitelenPali {
         }
     }
 
-    private static String describeChar(char ch) {
-        switch (ch) {
-            case ' ':
-                return "space";
-            case '\t':
-                return "tab";
-            case '\r':
-                return "carriage return";
-            case '\n':
-                return "line feed";
-            default:
-                return "'" + ch + "'";
-        }
-    }
 }
