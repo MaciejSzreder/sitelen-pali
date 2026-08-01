@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IloPiSitelenPali in the browser</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { font-family: Inter, Segoe UI, sans-serif; margin: 0; background: #07111f; color: #f8fafc; }
+    main { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+    .card { background: #10233d; border: 1px solid #213552; border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+    textarea, button { width: 100%; padding: 0.8rem; border-radius: 10px; border: 1px solid #334155; font: inherit; }
+    textarea { min-height: 8rem; background: #0f172a; color: #f8fafc; }
+    button { margin-top: 0.75rem; background: #0284c7; color: white; cursor: pointer; }
+    pre { white-space: pre-wrap; background: #020617; padding: 1rem; border-radius: 10px; overflow-x: auto; }
+    .hint { color: #7dd3fc; font-size: 0.95rem; }
+    a { color: #7dd3fc; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>IloPiSitelenPali in the browser</h1>
+    <p class="hint">This page launches the compiled Java entry point through CheerpJ. It is designed to be served over HTTP(S), not opened directly from the filesystem.</p>
+
+    <div class="card">
+      <label for="input">Sample input</label>
+      <textarea id="input">mi jan pona</textarea>
+      <button onclick="runDemo()">Run with CheerpJ</button>
+    </div>
+
+    <div class="card">
+      <h2>Output</h2>
+      <pre id="output">Waiting to launch…</pre>
+    </div>
+
+    <p><a href="tests.html">Open the browser test runner</a></p>
+  </main>
+
+  <script src="https://cjrtnc.leaningtech.com/4.3/loader.js"></script>
+  <script>
+    let ready = false;
+
+    async function ensureCheerpJ() {
+      if (ready) return;
+      await cheerpjInit({ version: 17 });
+      ready = true;
+    }
+
+    async function runDemo() {
+      const output = document.getElementById('output');
+      output.textContent = 'Starting CheerpJ…';
+
+      try {
+        await ensureCheerpJ();
+        output.textContent = 'Launching IloPiSitelenPali…';
+        await cheerpjRunMain('IloPiSitelenPali', '/app/target/classes/');
+        output.textContent = 'IloPiSitelenPali launched successfully. The app is running through CheerpJ.';
+      } catch (error) {
+        const message = typeof error === 'string' ? error : (error && error.message) ? error.message : String(error);
+        output.textContent = 'CheerpJ could not start the Java app: ' + message;
+      }
+    }
+
+    window.addEventListener('load', () => {
+      ensureCheerpJ().catch((error) => {
+        const message = typeof error === 'string' ? error : (error && error.message) ? error.message : String(error);
+        document.getElementById('output').textContent = 'CheerpJ initialization failed: ' + message;
+      });
+    });
+  </script>
+</body>
+</html>
