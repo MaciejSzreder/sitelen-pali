@@ -20,7 +20,7 @@
 <body>
   <main>
     <h1>IloPiSitelenPali in the browser</h1>
-    <p class="hint">This page launches the compiled Java entry point through CheerpJ. It is designed to be served over HTTP(S), not opened directly from the filesystem.</p>
+    <p class="hint">This page launches the compiled Java entry point through CheerpJ.</p>
 
     <div class="card">
       <label for="input">Sample input</label>
@@ -32,8 +32,6 @@
       <h2>Output</h2>
       <pre id="output">Waiting to launch…</pre>
     </div>
-
-    <p><a href="tests.html">Open the browser test runner</a></p>
   </main>
 
   <script src="https://cjrtnc.leaningtech.com/4.3/loader.js"></script>
@@ -53,7 +51,7 @@
       try {
         await ensureCheerpJ();
         output.textContent = 'Launching IloPiSitelenPali…';
-        await cheerpjRunMain('IloPiSitelenPali', '/app/target/classes/');
+        await cheerpjRunMain('IloPiSitelenPali', '/app/sitelen-pali/IloPiSitelenPali.jar');
         output.textContent = 'IloPiSitelenPali launched successfully. The app is running through CheerpJ.';
       } catch (error) {
         const message = typeof error === 'string' ? error : (error && error.message) ? error.message : String(error);

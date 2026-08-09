@@ -1,0 +1,43 @@
+name: Build and Deploy with CheerpJ
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Build with Maven
+      run: mvn clean package
+      
+    - name: Create deployment structure
+      run: |
+        mkdir -p deploy
+        cp target/IloPiSitelenPali.jar deploy/
+        cp index.html deploy/
+        
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: deploy/
+
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
