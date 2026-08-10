@@ -1,6 +1,7 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -24,7 +25,6 @@ class IloPiSitelenPaliTest {
         assertEquals("in.txt", options.inputPath());
         assertNull(options.logPath());
         assertFalse(options.showHelp());
-        assertFalse(options.invalid());
     }
 
     @Test
@@ -33,7 +33,6 @@ class IloPiSitelenPaliTest {
         assertEquals("in.txt", options.inputPath());
         assertNull(options.logPath());
         assertFalse(options.showHelp());
-        assertFalse(options.invalid());
     }
 
     @Test
@@ -42,7 +41,6 @@ class IloPiSitelenPaliTest {
         assertNull(options.inputPath());
         assertEquals("out.log", options.logPath());
         assertFalse(options.showHelp());
-        assertFalse(options.invalid());
     }
 
     @Test
@@ -51,14 +49,12 @@ class IloPiSitelenPaliTest {
         assertNull(options.inputPath());
         assertEquals("out.log", options.logPath());
         assertFalse(options.showHelp());
-        assertFalse(options.invalid());
     }
 
     @Test
     void parserRecognizesShortHelpFlagWithoutMarkingItInvalid() {
         CliOptions options = new CliOptionsParser().parse(new String[]{"-h"});
         assertTrue(options.showHelp());
-        assertFalse(options.invalid());
         assertNull(options.inputPath());
         assertNull(options.logPath());
     }
@@ -67,7 +63,6 @@ class IloPiSitelenPaliTest {
     void parserRecognizesLongHelpFlagWithoutMarkingItInvalid() {
         CliOptions options = new CliOptionsParser().parse(new String[]{"--help"});
         assertTrue(options.showHelp());
-        assertFalse(options.invalid());
         assertNull(options.inputPath());
         assertNull(options.logPath());
     }
@@ -78,22 +73,38 @@ class IloPiSitelenPaliTest {
         assertEquals("in.txt", options.inputPath());
         assertEquals("out.log", options.logPath());
         assertFalse(options.showHelp());
-        assertFalse(options.invalid());
     }
 
     @Test
-    void parserMarksUnknownOptionsAsInvalidAndShowsHelp() {
-        CliOptions options = new CliOptionsParser().parse(new String[]{"--wat"});
-        assertTrue(options.showHelp());
-        assertTrue(options.invalid());
+    void parserThrowsOnUnknownOptions() {
+        assertThrows(CliOptionsParser.ParseException.class, 
+            () -> new CliOptionsParser().parse(new String[]{"--wat"}));
     }
 
     @Test
-    void parserPreservesEarlierOptionsBeforeAnUnknownFlag() {
-        CliOptions options = new CliOptionsParser().parse(new String[]{"--input", "in.txt", "--wat"});
-        assertTrue(options.showHelp());
-        assertTrue(options.invalid());
-        assertEquals("in.txt", options.inputPath());
+    void parserThrowsOnMissingValueForInputFlag() {
+        assertThrows(CliOptionsParser.ParseException.class, 
+            () -> new CliOptionsParser().parse(new String[]{"--input"}));
+    }
+
+    @Test
+    void parserThrowsOnMissingValueForLogFlag() {
+        assertThrows(CliOptionsParser.ParseException.class, 
+            () -> new CliOptionsParser().parse(new String[]{"--log"}));
+    }
+
+    @Test
+    void parserThrowsOnUnknownOptionAndDoesNotPreserveEarlierOptions() {
+        assertThrows(CliOptionsParser.ParseException.class, 
+            () -> new CliOptionsParser().parse(new String[]{"--input", "in.txt", "--wat"}));
+    }
+
+    @Test
+    void parserReturnsUsageString() {
+        String usage = new CliOptionsParser().getUsage();
+        assertEquals("toki! ni li pali e ilo:\n" +
+                     "  java IloPiSitelenPali [--input FILE] [--log FILE]\n" +
+                     "  java IloPiSitelenPali --help", usage);
     }
 
     @Test

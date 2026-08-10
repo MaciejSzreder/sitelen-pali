@@ -13,26 +13,26 @@ public final class CliOptionsParser {
             } else if ("-h".equals(arg) || "--help".equals(arg)) {
                 showHelp = true;
             } else {
-                System.out.println("nimi ni li sona ala: " + arg);
-                return new CliOptions(inputPath, logPath, true, true);
+                throw new ParseException();
             }
         }
 
-        return new CliOptions(inputPath, logPath, showHelp, false);
+        return new CliOptions(inputPath, logPath, showHelp);
     }
 
     private String requireValue(String[] args, int index, String option) {
         if (index >= args.length) {
-            System.out.println("nimi kama jo li lon ala tan " + option);
-            printUsage();
-            System.exit(1);
+            throw new ParseException();
         }
         return args[index];
     }
 
-    private void printUsage() {
-        System.out.println("toki! ni li pali e ilo:");
-        System.out.println("  java IloPiSitelenPali [--input FILE] [--log FILE]");
-        System.out.println("  java IloPiSitelenPali --help");
+    public String getUsage() {
+        return "toki! ni li pali e ilo:\n" +
+               "  java IloPiSitelenPali [--input FILE] [--log FILE]\n" +
+               "  java IloPiSitelenPali --help";
+    }
+
+    public static class ParseException extends RuntimeException {
     }
 }

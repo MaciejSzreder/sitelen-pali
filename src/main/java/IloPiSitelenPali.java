@@ -7,11 +7,17 @@ public class IloPiSitelenPali {
     private static final CliOptionsParser CLI_OPTIONS_PARSER = new CliOptionsParser();
 
     public static void main(String[] args) {
-        CliOptions options = CLI_OPTIONS_PARSER.parse(args);
+        CliOptions options;
+        try {
+            options = CLI_OPTIONS_PARSER.parse(args);
+        } catch (CliOptionsParser.ParseException e) {
+            System.out.println(CLI_OPTIONS_PARSER.getUsage());
+            System.exit(1);
+            return;
+        }
+        
         if (options.showHelp()) {
-            if (options.invalid()) {
-                System.exit(1);
-            }
+            System.out.println(CLI_OPTIONS_PARSER.getUsage());
             return;
         }
 
