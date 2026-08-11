@@ -44,14 +44,32 @@
       ready = true;
     }
 
+    async function createInputFile(content) {
+      // Create file in /str/ filesystem
+      const strPath = '/str/input.txt';
+      cheerpOSAddStringFile(strPath, content);
+      return strPath;
+    }
+
     async function runDemo() {
       const output = document.getElementById('output');
+      const input = document.getElementById('input').value;
+      
+      if (!input.trim()) {
+        output.textContent = 'Please enter some text in the input area.';
+        return;
+      }
+
       output.textContent = 'Starting CheerpJ…';
 
       try {
         await ensureCheerpJ();
-        output.textContent = 'Launching IloPiSitelenPali…';
-        await cheerpjRunMain('IloPiSitelenPali', '/app/sitelen-pali/IloPiSitelenPali.jar');
+        output.textContent = 'Creating input file…';
+        
+        const inputFilePath = await createInputFile(input);
+        output.textContent = 'Launching IloPiSitelenPali with input file…';
+        
+        await cheerpjRunMain('IloPiSitelenPali', '/app/sitelen-pali/IloPiSitelenPali.jar', '--input', inputFilePath);
         output.textContent = 'IloPiSitelenPali launched successfully. The app is running through CheerpJ.';
       } catch (error) {
         const message = typeof error === 'string' ? error : (error && error.message) ? error.message : String(error);
