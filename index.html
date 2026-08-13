@@ -40,7 +40,7 @@
 
     async function ensureCheerpJ() {
       if (ready) return;
-      await cheerpjInit({ version: 17 });
+      await cheerpjInit({ version: 17, status: 'none' });
       ready = true;
     }
 
@@ -49,6 +49,36 @@
       const strPath = '/str/input.txt';
       cheerpOSAddStringFile(strPath, content);
       return strPath;
+    }
+
+    async function captureConsole(action) {
+      const capturedOutput = [];
+      const originalConsoleLog = console.log;
+      const originalConsoleError = console.error;
+      
+      console.log = function(...args) {
+        capturedOutput.push({ type: 'log', message: args.map(arg => 
+          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+        ).join(' ') });
+      };
+      
+      console.error = function(...args) {
+        capturedOutput.push({ type: 'error', message: args.map(arg => 
+          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+        ).join(' ') });
+      };
+      
+      try {
+        await action();
+      } finally {
+        console.log = originalConsoleLog;
+        console.error = originalConsoleError;
+      }
+      
+      return capturedOutput.map(entry => {
+        const prefix = entry.type === 'error' ? 'ERROR: ' : '';
+        return prefix + entry.message;
+      }).join('\n');
     }
 
     async function runDemo() {
@@ -69,8 +99,17 @@
         const inputFilePath = await createInputFile(input);
         output.textContent = 'Launching IloPiSitelenPali with input file…';
         
-        await cheerpjRunMain('IloPiSitelenPali', '/app/sitelen-pali/IloPiSitelenPali.jar', '--input', inputFilePath);
-        output.textContent = 'IloPiSitelenPali launched successfully. The app is running through CheerpJ.';
+        // Capture console output while running the Java application
+        const capturedText = await captureConsole(async () => {
+          await cheerpjRunMain('IloPiSitelenPali', '/app/sitelen-pali/IloPiSitelenPali.jar', '--input', inputFilePath);
+        });
+        
+        // Display the captured output
+        if (capturedText.trim()) {
+          output.textContent = capturedText;
+        } else {
+          output.textContent = 'IloPiSitelenPali completed. No output was captured.';
+        }
       } catch (error) {
         const message = typeof error === 'string' ? error : (error && error.message) ? error.message : String(error);
         output.textContent = 'CheerpJ could not start the Java app: ' + message;
