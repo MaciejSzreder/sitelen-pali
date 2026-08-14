@@ -27,11 +27,16 @@ jobs:
         
     - name: Build with Maven
       run: mvn clean package
-      
+        
+    - name: Download JUnit Platform Console Standalone
+      run: curl -L -o target/junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.11.4/junit-platform-console-standalone-1.11.4.jar
+        
     - name: Create deployment structure
       run: |
         mkdir -p deploy
         cp target/IloPiSitelenPali.jar deploy/
+        cp target/sitelen-pali-1.0-SNAPSHOT-Test.jar deploy/IloPiSitelenPaliTest.jar
+        cp target/junit-platform-console-standalone.jar deploy/
         cp index.html deploy/
         
     - name: Upload artifact
