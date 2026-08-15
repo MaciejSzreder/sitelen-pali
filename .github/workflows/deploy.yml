@@ -38,6 +38,7 @@ jobs:
         cp target/sitelen-pali-1.0-SNAPSHOT-Test.jar deploy/IloPiSitelenPaliTest.jar
         cp target/junit-platform-console-standalone.jar deploy/
         cp index.html deploy/
+        cp tests.html deploy/
         
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3

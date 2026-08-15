@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IloPiSitelenPali JUnit Tests</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { font-family: Inter, Segoe UI, sans-serif; margin: 0; background: #07111f; color: #f8fafc; }
+    main { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+    .card { background: #10233d; border: 1px solid #213552; border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+    button { width: 100%; padding: 0.8rem; border-radius: 10px; border: 1px solid #334155; font: inherit; }
+    button { margin-top: 0.75rem; background: #0284c7; color: white; cursor: pointer; }
+    pre { white-space: pre-wrap; background: #020617; padding: 1rem; border-radius: 10px; overflow-x: auto; }
+    .hint { color: #7dd3fc; font-size: 0.95rem; }
+    a { color: #7dd3fc; }
+    .success { color: #4ade80; }
+    .error { color: #f87171; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>IloPiSitelenPali JUnit Tests</h1>
+    <p class="hint">This page runs JUnit tests through CheerpJ using the JUnit Platform Console.</p>
+
+    <div class="card">
+      <button onclick="runTests()">Run JUnit Tests with CheerpJ</button>
+    </div>
+
+    <div class="card">
+      <h2>Test Output</h2>
+      <pre id="output">Waiting to launch tests…</pre>
+    </div>
+  </main>
+
+  <script src="https://cjrtnc.leaningtech.com/4.3/loader.js"></script>
+  <script>
+    let ready = false;
+
+    async function ensureCheerpJ() {
+      if (ready) return;
+      await cheerpjInit({ version: 17, status: 'none' });
+      ready = true;
+    }
+
+    async function captureConsole(action) {
+      const capturedOutput = [];
+      const originalConsoleLog = console.log;
+      const originalConsoleError = console.error;
+      
+      console.log = function(...args) {
+        capturedOutput.push({ type: 'log', message: args.map(arg => 
+          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+        ).join(' ') });
+      };
+      
+      console.error = function(...args) {
+        capturedOutput.push({ type: 'error', message: args.map(arg => 
+          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+        ).join(' ') });
+      };
+      
+      try {
+        await action();
+      } finally {
+        console.log = originalConsoleLog;
+        console.error = originalConsoleError;
+      }
+      
+      return capturedOutput.map(entry => {
+        const prefix = entry.type === 'error' ? 'ERROR: ' : '';
+        return prefix + entry.message;
+      }).join('\n');
+    }
+
+    async function runTests() {
+      const output = document.getElementById('output');
+      
+      output.textContent = 'Starting CheerpJ…';
+
+      try {
+        await ensureCheerpJ();
+        output.textContent = 'Launching JUnit Platform Console…';
+        
+        // Capture console output while running the JUnit tests
+        const capturedText = await captureConsole(async () => {
+          // Run JUnit Platform Console with both main and test jars in classpath
+          await cheerpjRunMain('org.junit.platform.console.ConsoleLauncher', 
+            '/app/sitelen-pali/junit-platform-console-standalone.jar',
+            'execute',
+            '--classpath', '/app/sitelen-pali/IloPiSitelenPali.jar:/app/sitelen-pali/IloPiSitelenPaliTest.jar',
+            '--select-class', 'IloPiSitelenPaliTest');
+        });
+        
+        // Display the captured output
+        if (capturedText.trim()) {
+          output.textContent = capturedText;
+        } else {
+          output.textContent = 'Tests completed. No output was captured.';
+        }
+      } catch (error) {
+        const message = typeof error === 'string' ? error : (error && error.message) ? error.message : String(error);
+        output.textContent = 'CheerpJ could not run the tests: ' + message;
+      }
+    }
+
+    window.addEventListener('load', () => {
+      ensureCheerpJ().catch((error) => {
+        const message = typeof error === 'string' ? error : (error && error.message) ? error.message : String(error);
+        document.getElementById('output').textContent = 'CheerpJ initialization failed: ' + message;
+      });
+    });
+  </script>
+</body>
+</html>
