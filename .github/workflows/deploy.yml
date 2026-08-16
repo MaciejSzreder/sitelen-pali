@@ -39,6 +39,8 @@ jobs:
         cp target/junit-platform-console-standalone.jar deploy/
         cp index.html deploy/
         cp tests.html deploy/
+        cp styles.css deploy/
+        cp common.js deploy/
         
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3

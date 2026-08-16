@@ -1,0 +1,12 @@
+:root { color-scheme: dark; }
+body { font-family: Inter, Segoe UI, sans-serif; margin: 0; background: #07111f; color: #f8fafc; }
+main { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+.card { background: #10233d; border: 1px solid #213552; border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+textarea, button { width: 100%; padding: 0.8rem; border-radius: 10px; border: 1px solid #334155; font: inherit; }
+textarea { min-height: 8rem; background: #0f172a; color: #f8fafc; }
+button { margin-top: 0.75rem; background: #0284c7; color: white; cursor: pointer; }
+pre { white-space: pre-wrap; background: #020617; padding: 1rem; border-radius: 10px; overflow-x: auto; }
+.hint { color: #7dd3fc; font-size: 0.95rem; }
+a { color: #7dd3fc; }
+.success { color: #4ade80; }
+.error { color: #f87171; }
