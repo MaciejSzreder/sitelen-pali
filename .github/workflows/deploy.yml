@@ -41,6 +41,7 @@ jobs:
         cp tests.html deploy/
         cp styles.css deploy/
         cp common.js deploy/
+        cp app.js deploy/
         
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
